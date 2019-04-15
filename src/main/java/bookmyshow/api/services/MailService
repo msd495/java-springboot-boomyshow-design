@@ -1,0 +1,33 @@
+package bookmyshow.api.services;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+
+import bookmyshow.model.Mail;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.stereotype.Service;
+
+@Service
+public class MailService {
+    @Autowired
+    private JavaMailSender sender;
+
+    public String sendMail(Mail mail){
+        MimeMessage message = sender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+
+        try {
+            helper.setTo(mail.getMsgTo());
+            helper.setText(mail.getMsgBody());
+            helper.setSubject(mail.getSubject());
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            return "Error while sending mail ..";
+        }
+        sender.send(message);
+        return "Mail Sent Success!";
+    }
+}
+
